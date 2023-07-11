@@ -1,0 +1,175 @@
+import { Dialog } from '@headlessui/react'
+import { Pencil } from 'phosphor-react'
+import { Modal } from '../../../../components/Modal'
+import { Input } from '../../../../components/Input'
+import { TextArea } from '../../../../components/TextArea'
+import { NewsData } from '../../../../interfaces/News'
+import { DatePicker } from '../../../../components/DatePicker'
+import { z } from 'zod'
+import { Controller, useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import axios, { AxiosError } from 'axios'
+import { toast } from 'react-hot-toast'
+import { useContext, useState } from 'react'
+import { NewsContext } from '../../../../contexts/NewsProvider'
+
+interface EditModalProps {
+  open: boolean
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
+  news: NewsData
+}
+
+const editFormSchema = z.object({
+  title: z
+    .string({ required_error: 'Título não pode ser vazio.' })
+    .min(4, { message: 'Mínimo 4 caracteres.' }),
+  author: z
+    .string({ required_error: 'Nome do Autor não pode ser vazio.' })
+    .min(3, { message: 'Mínimo 3 caracteres.' })
+    .regex(/^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ'\s]+$/, 'Nome inválido'),
+  content: z
+    .string({ required_error: 'Conteúdo não pode ser vazio.' })
+    .min(120, { message: 'Mínimo 120 caracteres.' }),
+})
+
+type EditFormSchema = z.infer<typeof editFormSchema>
+
+export function EditModal({ open, setOpen, news }: EditModalProps) {
+  const { setNews } = useContext(NewsContext)
+  const [newReleaseDate, setNewReleaseDate] = useState(news.release_date)
+
+  const {
+    handleSubmit,
+    formState: { errors },
+    control,
+  } = useForm<EditFormSchema>({
+    resolver: zodResolver(editFormSchema),
+    defaultValues: {
+      title: news.title,
+      author: news.author,
+      content: news.content,
+    },
+  })
+
+  const handleEditNews = async (data: EditFormSchema) => {
+    try {
+      await axios.patch(`http://localhost:3000/news/${news.id}`, {
+        ...data,
+        release_date: newReleaseDate,
+      })
+
+      const updatedNews = await axios.get('http://localhost:3000/news')
+      setNews(updatedNews.data)
+      setOpen(false)
+      toast.success('Notícia atualizada !')
+    } catch (error) {
+      if (error instanceof AxiosError) toast.error(error.message)
+      else toast.error('Erro ao buscar os dados, tente novamente mais tarde.')
+    }
+  }
+
+  const handleDateChange = (date: Date) => {
+    setNewReleaseDate(new Date(date).toISOString())
+  }
+
+  const onSubmit = (data: EditFormSchema) => {
+    handleEditNews(data)
+  }
+
+  return (
+    <Modal open={open} setOpen={setOpen}>
+      <div className="bg-slate-800 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+        <div className="sm:flex sm:items-start">
+          <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 sm:mx-0 sm:h-10 sm:w-10">
+            <Pencil className="h-6 w-6 text-blue-100" />
+          </div>
+          <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+            <Dialog.Title
+              as="h3"
+              className="text-base font-semibold leading-6 text-white"
+            >
+              Editar informações da notícia
+            </Dialog.Title>
+            <div className="mt-3">
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="flex flex-col gap-4"
+              >
+                <div className="grid gap-6 md:grid-cols-2">
+                  <Controller
+                    control={control}
+                    name="title"
+                    render={({ field }) => (
+                      <Input
+                        type="text"
+                        id="title"
+                        label="Título"
+                        required
+                        error={!!errors.title?.message}
+                        errorText={errors.title?.message as string}
+                        {...field}
+                      />
+                    )}
+                  />
+
+                  <Controller
+                    control={control}
+                    name="author"
+                    render={({ field }) => (
+                      <Input
+                        type="text"
+                        id="author"
+                        label="Autor"
+                        required
+                        error={!!errors.author?.message}
+                        errorText={errors.author?.message as string}
+                        {...field}
+                      />
+                    )}
+                  />
+                </div>
+
+                <DatePicker
+                  label="Data de publicação"
+                  defaultValue={new Date(news.release_date)}
+                  onDateChange={handleDateChange}
+                />
+
+                <Controller
+                  control={control}
+                  name="content"
+                  render={({ field }) => (
+                    <TextArea
+                      id="content"
+                      label="Conteúdo"
+                      required
+                      error={!!errors.content?.message}
+                      errorText={errors.content?.message as string}
+                      {...field}
+                    />
+                  )}
+                />
+
+                <button
+                  type="submit"
+                  className="text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800"
+                >
+                  Enviar
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="bg-slate-700 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+        <button
+          type="button"
+          className="mt-3 inline-flex w-full justify-center rounded-md bg-red-500 px-3 py-2 text-sm font-semibold text-white shadow-sm  hover:bg-red-700 sm:mt-0 sm:w-auto"
+          onClick={() => setOpen(false)}
+        >
+          Cancelar
+        </button>
+      </div>
+    </Modal>
+  )
+}
