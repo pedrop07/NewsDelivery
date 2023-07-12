@@ -1,13 +1,13 @@
-import { NewsProvider } from './contexts/NewsProvider'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AppRouter } from './routes'
 
 function App() {
+  const queryClient = new QueryClient()
+
   return (
-    <>
-      <NewsProvider>
-        <AppRouter />
-      </NewsProvider>
-    </>
+    <QueryClientProvider client={queryClient}>
+      <AppRouter />
+    </QueryClientProvider>
   )
 }
 

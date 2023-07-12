@@ -1,32 +1,11 @@
 {
   "news": [
     {
-      "id": "news-01",
-      "title": "Noticiaz 01",
-      "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "title": "Noticia 01",
       "author": "Autor",
-      "release_date": "2023-07-08T20:10:14.453Z"
-    },
-    {
-      "id": "news-02",
-      "title": "Noticia 02",
-      "content": "LoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremmLoremm",
-      "author": "Autor",
-      "release_date": "2023-07-09T21:02:14.453Z"
-    },
-    {
-      "id": "news-03",
-      "title": "Noticia 03",
-      "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-      "author": "Autor",
-      "release_date": "2023-07-10T13:52:14.453Z"
-    },
-    {
-      "id": "news-04",
-      "title": "Noticia 04",
-      "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-      "author": "Autor",
-      "release_date": "2023-03-10T17:12:14.453Z"
+      "content": "Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste ",
+      "release_date": "2023-07-12T01:00:32.477Z",
+      "id": 1
     }
   ]
 }

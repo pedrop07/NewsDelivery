@@ -31,7 +31,7 @@ export function TextArea({
             className,
             error && 'border-rose-500 border-2',
           )}
-          placeholder="Write your thoughts here..."
+          placeholder="Escreva o conteúdo da notícia..."
           id={id}
           {...props}
         />
