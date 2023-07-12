@@ -113,7 +113,7 @@ export function CreateNews() {
           </button>
         </form>
       </div>
-      <div>
+      <div className="md:block hidden">
         <img src={img} className="w-[400px]" alt="" />
       </div>
     </div>
