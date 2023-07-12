@@ -1,45 +1,57 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { NewsContext } from '../../contexts/NewsProvider'
-import { NewsData } from '../../interfaces/News'
-import { Pencil } from 'phosphor-react'
+import { Pencil, Trash } from 'phosphor-react'
 import { EditModal } from './components/EditModal'
+import { useQueryNewsDetails } from '../../shared/hooks/useQueryNewsDetails'
+import { ErrorHandler } from '../../components/ErrorHandler'
+import { DeleteModal } from './components/DeleteModal'
+
+type DetailsParams = {
+  id: string
+}
 
 export function NewsDetails() {
-  const { news } = useContext(NewsContext)
-  const [open, setOpen] = useState(false)
-  const { id } = useParams()
+  const [openEditModal, setOpenEditModal] = useState(false)
+  const [openDeleteModal, setOpenDeleteModal] = useState(false)
+  const { id } = useParams<DetailsParams>()
+  const { isLoadingNews, news, errorNews, isErrorNews, refetch } =
+    useQueryNewsDetails(id as string)
 
-  if (news.length === 0) {
+  if (isLoadingNews) {
     return (
       <>
         <div
           role="status"
-          className="mt-10 mb-7 border-b border-gray-400 pb-3 shadow animate-pulse dark:border-gray-700"
+          className="mt-10 mb-7 border-b border-gray-400 pb-3 shadow animate-pulse"
         >
-          <div className="h-8 bg-gray-200 rounded-full dark:bg-gray-700 w-56 mb-4"></div>
-          <div className="h-3 bg-gray-200 rounded-full dark:bg-gray-700 w-56 mb-2.5"></div>
+          <div className="h-8 bg-gray-500 rounded-full w-56 mb-4"></div>
+          <div className="h-3 bg-gray-500 rounded-full w-56 mb-2.5"></div>
 
           <span className="sr-only">Loading...</span>
         </div>
-        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
-        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
-        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
-        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
-        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
-        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
-        <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+        <div className="h-2 bg-gray-500 rounded-full mb-2.5"></div>
+        <div className="h-2 bg-gray-500 rounded-full mb-2.5"></div>
+        <div className="h-2 bg-gray-500 rounded-full mb-2.5"></div>
+        <div className="h-2 bg-gray-500 rounded-full mb-2.5"></div>
+        <div className="h-2 bg-gray-500 rounded-full mb-2.5"></div>
+        <div className="h-2 bg-gray-500 rounded-full mb-2.5"></div>
+        <div className="h-2 bg-gray-500 rounded-full"></div>
       </>
     )
   }
 
-  const selectedNews = news.find((news) => news.id === id) as NewsData
+  if (isErrorNews) {
+    return <ErrorHandler error={errorNews as Error} />
+  }
 
-  const releaseDate = new Date(selectedNews.release_date).toLocaleDateString()
-  const releaseTime = new Date(selectedNews.release_date).toLocaleTimeString()
+  const releaseDate = new Date(news.release_date).toLocaleDateString()
 
-  const handleOpenModal = () => {
-    setOpen(!open)
+  const handleOpenEditModal = () => {
+    setOpenEditModal(!openEditModal)
+  }
+
+  const handleOpenDeleteModal = () => {
+    setOpenDeleteModal(!openDeleteModal)
   }
 
   return (
@@ -47,32 +59,45 @@ export function NewsDetails() {
       <div>
         <div className="mt-10 mb-7 border-b border-gray-400 pb-3 flex justify-between">
           <div>
-            <h1 className="font-bold text-4xl mb-2">{selectedNews.title}</h1>
+            <h1 className="font-bold text-4xl mb-2">{news.title}</h1>
             <div className="flex items-center gap-3">
-              <div className="font-bold text-base">{selectedNews.author}</div>
-              <time
-                className="font-bold text-sm"
-                dateTime={selectedNews.release_date}
-              >
-                {releaseDate} {releaseTime}
+              <div className="font-bold text-base">{news.author}</div>
+              <time className="font-bold text-sm" dateTime={news.release_date}>
+                {releaseDate}
               </time>
             </div>
           </div>
-          <div>
+          <div className="flex items-center gap-2">
             <button
-              onClick={handleOpenModal}
-              className="rounded-full hover:bg-gray-600 transition-all duration-200 ease-out p-1"
+              onClick={handleOpenEditModal}
+              className="rounded-full hover:bg-gray-600 transition-all duration-200 ease-out p-2"
             >
               <Pencil size={26} />
+            </button>
+            <button
+              onClick={handleOpenDeleteModal}
+              className="rounded-full hover:bg-gray-600 transition-all duration-200 ease-out p-2"
+            >
+              <Trash size={26} />
             </button>
           </div>
         </div>
         <div>
-          <p className="break-all">{selectedNews.content}</p>
+          <p className="break-all">{news.content}</p>
         </div>
       </div>
 
-      <EditModal news={selectedNews} open={open} setOpen={setOpen} />
+      <EditModal
+        refetch={refetch}
+        news={news}
+        open={openEditModal}
+        setOpen={setOpenEditModal}
+      />
+      <DeleteModal
+        news={news}
+        open={openDeleteModal}
+        setOpen={setOpenDeleteModal}
+      />
     </>
   )
 }

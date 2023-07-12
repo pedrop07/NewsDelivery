@@ -8,15 +8,14 @@ import { DatePicker } from '../../../../components/DatePicker'
 import { z } from 'zod'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import axios, { AxiosError } from 'axios'
-import { toast } from 'react-hot-toast'
-import { useContext, useState } from 'react'
-import { NewsContext } from '../../../../contexts/NewsProvider'
+import { useEffect, useState } from 'react'
+import { useMutationEditNews } from '../../../../shared/hooks/useMutationEditNews'
 
 interface EditModalProps {
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
   news: NewsData
+  refetch: () => void
 }
 
 const editFormSchema = z.object({
@@ -34,9 +33,9 @@ const editFormSchema = z.object({
 
 type EditFormSchema = z.infer<typeof editFormSchema>
 
-export function EditModal({ open, setOpen, news }: EditModalProps) {
-  const { setNews } = useContext(NewsContext)
+export function EditModal({ open, setOpen, news, refetch }: EditModalProps) {
   const [newReleaseDate, setNewReleaseDate] = useState(news.release_date)
+  const { mutate, isSuccess } = useMutationEditNews()
 
   const {
     handleSubmit,
@@ -51,30 +50,20 @@ export function EditModal({ open, setOpen, news }: EditModalProps) {
     },
   })
 
-  const handleEditNews = async (data: EditFormSchema) => {
-    try {
-      await axios.patch(`http://localhost:3000/news/${news.id}`, {
-        ...data,
-        release_date: newReleaseDate,
-      })
-
-      const updatedNews = await axios.get('http://localhost:3000/news')
-      setNews(updatedNews.data)
-      setOpen(false)
-      toast.success('Notícia atualizada !')
-    } catch (error) {
-      if (error instanceof AxiosError) toast.error(error.message)
-      else toast.error('Erro ao buscar os dados, tente novamente mais tarde.')
-    }
-  }
-
   const handleDateChange = (date: Date) => {
     setNewReleaseDate(new Date(date).toISOString())
   }
 
   const onSubmit = (data: EditFormSchema) => {
-    handleEditNews(data)
+    mutate({ ...data, id: news.id, release_date: newReleaseDate })
   }
+
+  useEffect(() => {
+    if (isSuccess) {
+      setOpen(false)
+      refetch()
+    }
+  }, [isSuccess])
 
   return (
     <Modal open={open} setOpen={setOpen}>
