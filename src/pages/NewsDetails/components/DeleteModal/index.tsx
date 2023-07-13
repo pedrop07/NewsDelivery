@@ -4,6 +4,7 @@ import { Modal } from '../../../../components/Modal'
 import { NewsData } from '../../../../interfaces/News'
 import { useEffect } from 'react'
 import { useMutationDeleteNews } from '../../../../shared/hooks/useMutationDeleteNews'
+import { Spinner } from '../../../../components/Spinner'
 
 interface DeleteModalProps {
   open: boolean
@@ -12,10 +13,10 @@ interface DeleteModalProps {
 }
 
 export function DeleteModal({ open, setOpen, news }: DeleteModalProps) {
-  const { mutate, isSuccess } = useMutationDeleteNews()
+  const { mutate, isSuccess, isLoading } = useMutationDeleteNews()
 
   const handleDeleteNews = () => {
-    mutate(news.id as string)
+    mutate(news.id)
   }
 
   useEffect(() => {
@@ -54,7 +55,7 @@ export function DeleteModal({ open, setOpen, news }: DeleteModalProps) {
           className="mt-3 inline-flex w-full justify-center rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-600 sm:mt-0 sm:w-auto"
           onClick={handleDeleteNews}
         >
-          Confirmar
+          {isLoading ? <Spinner /> : 'Confirmar'}
         </button>
         <button
           type="button"

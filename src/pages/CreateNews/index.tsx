@@ -4,46 +4,33 @@ import { DatePicker } from '../../components/DatePicker'
 import { Input } from '../../components/Input'
 import { TextArea } from '../../components/TextArea'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import { useState } from 'react'
 import { useMutationCreateNews } from '../../shared/hooks/useMutationCreateNews'
-
-const createFormSchema = z.object({
-  title: z
-    .string({ required_error: 'Título não pode ser vazio.' })
-    .min(4, { message: 'Mínimo 4 caracteres.' }),
-  author: z
-    .string({ required_error: 'Nome do Autor não pode ser vazio.' })
-    .min(3, { message: 'Mínimo 3 caracteres.' })
-    .regex(/^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ'\s]+$/, 'Nome inválido'),
-  content: z
-    .string({ required_error: 'Conteúdo não pode ser vazio.' })
-    .min(120, { message: 'Mínimo 120 caracteres.' }),
-})
-
-type CreateFormSchema = z.infer<typeof createFormSchema>
+import {
+  NewsFormSchema,
+  newsFormSchema,
+} from '../../shared/utils/validationsSchema'
+import { Spinner } from '../../components/Spinner'
 
 export function CreateNews() {
   const [releaseDate, setReleaseDate] = useState(new Date().toISOString())
-  const { mutate, isError } = useMutationCreateNews()
+  const { mutate, isLoading } = useMutationCreateNews()
 
   const {
     handleSubmit,
     formState: { errors },
     control,
-  } = useForm<CreateFormSchema>({
-    resolver: zodResolver(createFormSchema),
+  } = useForm<NewsFormSchema>({
+    resolver: zodResolver(newsFormSchema),
   })
 
   const handleDateChange = (date: Date) => {
     setReleaseDate(new Date(date).toISOString())
   }
 
-  const onSubmit = (data: CreateFormSchema) => {
+  const onSubmit = (data: NewsFormSchema) => {
     mutate({ ...data, release_date: releaseDate })
   }
-
-  console.log(isError)
 
   return (
     <div className="lg:mt-22 mt-14 flex items-center justify-center gap-20">
@@ -109,7 +96,7 @@ export function CreateNews() {
             type="submit"
             className="text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800"
           >
-            Enviar
+            {isLoading ? <Spinner /> : 'Enviar'}
           </button>
         </form>
       </div>

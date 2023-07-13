@@ -5,11 +5,15 @@ import { Input } from '../../../../components/Input'
 import { TextArea } from '../../../../components/TextArea'
 import { NewsData } from '../../../../interfaces/News'
 import { DatePicker } from '../../../../components/DatePicker'
-import { z } from 'zod'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useState } from 'react'
 import { useMutationEditNews } from '../../../../shared/hooks/useMutationEditNews'
+import {
+  NewsFormSchema,
+  newsFormSchema,
+} from '../../../../shared/utils/validationsSchema'
+import { Spinner } from '../../../../components/Spinner'
 
 interface EditModalProps {
   open: boolean
@@ -18,31 +22,16 @@ interface EditModalProps {
   refetch: () => void
 }
 
-const editFormSchema = z.object({
-  title: z
-    .string({ required_error: 'Título não pode ser vazio.' })
-    .min(4, { message: 'Mínimo 4 caracteres.' }),
-  author: z
-    .string({ required_error: 'Nome do Autor não pode ser vazio.' })
-    .min(3, { message: 'Mínimo 3 caracteres.' })
-    .regex(/^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ'\s]+$/, 'Nome inválido'),
-  content: z
-    .string({ required_error: 'Conteúdo não pode ser vazio.' })
-    .min(120, { message: 'Mínimo 120 caracteres.' }),
-})
-
-type EditFormSchema = z.infer<typeof editFormSchema>
-
 export function EditModal({ open, setOpen, news, refetch }: EditModalProps) {
   const [newReleaseDate, setNewReleaseDate] = useState(news.release_date)
-  const { mutate, isSuccess } = useMutationEditNews()
+  const { mutate, isSuccess, isLoading } = useMutationEditNews()
 
   const {
     handleSubmit,
     formState: { errors },
     control,
-  } = useForm<EditFormSchema>({
-    resolver: zodResolver(editFormSchema),
+  } = useForm<NewsFormSchema>({
+    resolver: zodResolver(newsFormSchema),
     defaultValues: {
       title: news.title,
       author: news.author,
@@ -54,7 +43,7 @@ export function EditModal({ open, setOpen, news, refetch }: EditModalProps) {
     setNewReleaseDate(new Date(date).toISOString())
   }
 
-  const onSubmit = (data: EditFormSchema) => {
+  const onSubmit = (data: NewsFormSchema) => {
     mutate({ ...data, id: news.id, release_date: newReleaseDate })
   }
 
@@ -143,7 +132,7 @@ export function EditModal({ open, setOpen, news, refetch }: EditModalProps) {
                   type="submit"
                   className="text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800"
                 >
-                  Enviar
+                  {isLoading ? <Spinner /> : 'Enviar'}
                 </button>
               </form>
             </div>

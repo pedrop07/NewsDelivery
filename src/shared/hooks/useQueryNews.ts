@@ -9,7 +9,7 @@ export function useQueryNews() {
   })
 
   return {
-    news: data?.data,
+    news: data?.data.data,
     isLoadingNews: isLoading,
     isErrorNews: isError,
     errorNews: error,
