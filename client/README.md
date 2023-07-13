@@ -29,26 +29,28 @@ Para rodar a aplicação localmente em sua máquina, você devera seguir os segu
   git clone https://github.com/pedrop07/NewsDelivery.git
 ```
 
-Entre no diretório do projeto.
+Entre no diretório do projeto
 
 ```bash
   cd NewsDelivery/client
 ```
 
-Instale as dependências.
+Instale as dependências
 
 ```bash
   npm install
 ```
 
-Gere uma versão de build da aplicação.
+Gere uma versão de build da aplicação
 
 ```bash
   npm run build
 ```
 
-Execute a versão de build criada.
+Execute a versão de build criada
 
 ```bash
   npm run preview
 ```
+
+Após seguir esses passos, você terá acesso à aplicação através da rota `http://localhost:4173`. Ao acessar o site, será possível criar, editar, deletar e visualizar notícias que são armazenadas no banco de dados PostgreSQL, o qual está sendo executado no contêiner Docker do back-end da aplicação.
