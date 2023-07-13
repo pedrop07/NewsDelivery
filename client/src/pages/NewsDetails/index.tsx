@@ -47,11 +47,11 @@ export function NewsDetails() {
   const releaseDate = new Date(news.release_date).toLocaleDateString()
 
   const handleOpenEditModal = () => {
-    setOpenEditModal(!openEditModal)
+    setOpenEditModal(true)
   }
 
   const handleOpenDeleteModal = () => {
-    setOpenDeleteModal(!openDeleteModal)
+    setOpenDeleteModal(true)
   }
 
   return (

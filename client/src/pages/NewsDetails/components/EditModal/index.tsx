@@ -30,6 +30,7 @@ export function EditModal({ open, setOpen, news, refetch }: EditModalProps) {
     handleSubmit,
     formState: { errors },
     control,
+    setValue,
   } = useForm<NewsFormSchema>({
     resolver: zodResolver(newsFormSchema),
     defaultValues: {
@@ -53,6 +54,12 @@ export function EditModal({ open, setOpen, news, refetch }: EditModalProps) {
       refetch()
     }
   }, [isSuccess])
+
+  useEffect(() => {
+    setValue('author', news.author)
+    setValue('content', news.content)
+    setValue('title', news.title)
+  }, [open])
 
   return (
     <Modal open={open} setOpen={setOpen}>
