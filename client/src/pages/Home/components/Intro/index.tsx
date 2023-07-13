@@ -4,8 +4,10 @@ export function Intro() {
   return (
     <div className="flex lg:flex-row flex-col items-center justify-center gap-10 lg:gap-20 lg:mt-22 mt-14">
       <div className="lg:order-first order-last">
-        <h1 className="font-extrabold text-5xl mb-4">News Delivery</h1>
-        <p className="text-xl max-w-xl">
+        <h1 className="font-extrabold text-4xl sm:text-5xl mb-4">
+          News Delivery
+        </h1>
+        <p className="text-lg sm:text-xl max-w-xl">
           o News Delivery mantém você conectado ao que realmente importa,
           oferecendo uma visão global dos acontecimentos mais relevantes.
         </p>
